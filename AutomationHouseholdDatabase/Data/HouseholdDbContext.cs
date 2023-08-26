@@ -1,9 +1,10 @@
 ﻿using AutomationHouseholdDatabase.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace AutomationHouseholdDatabase.Data;
 
-public partial class HouseholdDbContext : DbContext
+public partial class HouseholdDbContext : DbContext, IHouseholdDbContext
 {
     private readonly string _connectionString;
 
@@ -91,9 +92,8 @@ public partial class HouseholdDbContext : DbContext
 
         modelBuilder.Entity<OrdersToResource>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("orders_to_resources");
+            entity.HasKey(e => new { e.OrderId, e.ResourceId }).HasName("orders_to_resources_pkey");
+            entity.ToTable("orders_to_resources");
 
             entity.Property(e => e.Count).HasColumnName("count");
             entity.Property(e => e.OrderId).HasColumnName("order_id");

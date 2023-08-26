@@ -13,5 +13,10 @@ namespace HouseholdAutomationDesktop.Model
                 Debug.WriteLine(logMessage.InnerException.ToString());
             }
         }
+
+        public void Log<T>(LogSeverety severety, string message, Exception? innerException = null)
+        {
+            Log<T>(new(severety, message, innerException));
+        }
     }
 }

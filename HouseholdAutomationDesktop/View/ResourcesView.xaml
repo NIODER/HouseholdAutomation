@@ -5,9 +5,62 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HouseholdAutomationDesktop.View"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
+             d:DesignHeight="650" d:DesignWidth="1200"
+             Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"
+             Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualHeight}"
              DataContext="{Binding ResourcesViewModel, Mode=OneWay, Source={StaticResource Locator}}">
-    <Grid>
-            
+    <Grid Background="White">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.5*" />
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="0.2*" />
+            </Grid.RowDefinitions>
+            <ListBox DockPanel.Dock="Top" ItemsSource="{Binding Resources}" SelectedItem="{Binding ChosenResource}"
+                     VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                     HorizontalContentAlignment="Stretch"
+                     ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" d:ItemsSource="{d:SampleData}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding ResourceName}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <StackPanel Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10">
+                <Button Content="Добавить" Style="{StaticResource DefaultButtonStyle}" Command="{Binding AddResourceCommand}" />
+                <Button Content="Удалить" Style="{StaticResource DefaultButtonStyle}" Command="{Binding DeleteResouceCommand}" />
+            </StackPanel>
+        </Grid>
+        <DockPanel Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <DockPanel DockPanel.Dock="Top">
+                <TextBlock Text="id" Width="250" />
+                <TextBlock Text="{Binding ChosenResource.ResourceId}" />
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Top">
+                <TextBlock Text="Ресурс" Width="250" />
+                <TextBlock Text="{Binding ChosenResource.ResourceName}" />
+            </DockPanel>
+            <ListBox DockPanel.Dock="Top" ItemsSource="{Binding ResourceProviders}"
+                     VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                     HorizontalContentAlignment="Stretch"
+                     ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" d:ItemsSource="{d:SampleData}">
+                <ListBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Загрузить" Command="{Binding LoadProvidersCommand}" />
+                    </ContextMenu>
+                </ListBox.ContextMenu>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel>
+                            <TextBlock Text="{Binding ProviderName}" Width="250" />
+                            <TextBlock Text="{Binding Phone}" />
+                        </DockPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
     </Grid>
 </UserControl>

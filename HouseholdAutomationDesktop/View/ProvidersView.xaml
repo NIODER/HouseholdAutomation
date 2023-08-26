@@ -5,9 +5,82 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HouseholdAutomationDesktop.View"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
-             DataContext="{Binding ProvidersViewModel, Mode=OneWay, Source={StaticResource Locator}}">
+             d:DesignHeight="650" d:DesignWidth="1200"
+             Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"
+             Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualHeight}"
+             DataContext="{Binding ProvidersViewModel, Mode=OneWay, Source={StaticResource Locator}}"
+             Background="White">
+    <UserControl.Resources>
+        <Style x:Key="TextBlockDefaultStyle" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+        <Style x:Key="TextBlockPropertyNameStyle" BasedOn="{StaticResource TextBlockDefaultStyle}" TargetType="TextBlock">
+            <Setter Property="Width" Value="120" />
+        </Style>
+    </UserControl.Resources>
     <Grid>
-            
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.5*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="0.2*" />
+            </Grid.RowDefinitions>
+            <ListBox ItemsSource="{Binding Providers}" SelectedItem="{Binding SelectedProvider}" d:ItemsSource="{d:SampleData}" HorizontalContentAlignment="Stretch">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{Binding ProviderId}" />
+                            <TextBlock Grid.Column="1" Text="{Binding ProviderName}" />
+                            <TextBlock Grid.Column="2" Text="{Binding Phone}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <StackPanel Margin="10" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Button Content="Добавить" Style="{StaticResource DefaultButtonStyle}" Command="{Binding AddProviderCommand}" />
+                <Button Content="Удалить" Style="{StaticResource DefaultButtonStyle}" Command="{Binding DeleteProviderCommand}" />
+                <Button Content="Сохранить" Style="{StaticResource DefaultButtonStyle}" Command="{Binding SaveCommand}" />
+            </StackPanel>
+        </Grid>
+        <DockPanel Grid.Column="1" HorizontalAlignment="Stretch">
+            <DockPanel DockPanel.Dock="Top">
+                <TextBlock Text="id:" Style="{StaticResource TextBlockPropertyNameStyle}" />
+                <TextBlock Text="{Binding SelectedProvider.ProviderId}" Style="{StaticResource TextBlockDefaultStyle}" />
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Top">
+                <TextBlock Text="Название:" Style="{StaticResource TextBlockPropertyNameStyle}" />
+                <TextBlock Text="{Binding SelectedProvider.ProviderName}" Style="{StaticResource TextBlockDefaultStyle}" />
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Top">
+                <TextBlock Text="Сайт:" Style="{StaticResource TextBlockPropertyNameStyle}" />
+                <TextBlock Text="{Binding SelectedProvider.Website}" Style="{StaticResource TextBlockDefaultStyle}" />
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Top">
+                <TextBlock Text="Телефон:" Style="{StaticResource TextBlockPropertyNameStyle}" />
+                <TextBlock Text="{Binding SelectedProvider.Phone}" Style="{StaticResource TextBlockDefaultStyle}" />
+            </DockPanel>
+            <ListView ItemsSource="{Binding ResourceAdapters}" d:ItemsSource="{d:SampleData}" HorizontalContentAlignment="Stretch">
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Добавить ресурс" Command="{Binding AddResourceCommand}" />
+                        <MenuItem Header="Убрать выбранный ресурс" Command="{Binding DeleteResourceCommand}" />
+                    </ContextMenu>
+                </ListView.ContextMenu>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn DisplayMemberBinding="{Binding Resource.ResourceName}" Header="Ресурс" />
+                        <GridViewColumn DisplayMemberBinding="{Binding ProviderToResource.Cost}" Header="Стоимость" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </DockPanel>
     </Grid>
 </UserControl>

@@ -1,10 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using HouseholdAutomationDesktop.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Windows.Input;
 
 namespace HouseholdAutomationDesktop.ViewModel
 {
@@ -24,8 +21,8 @@ namespace HouseholdAutomationDesktop.ViewModel
             get => _selectedRedactor;
             set
             {
-                OnPropertyChanged(nameof(SelectedRedactor));
                 _selectedRedactor = value;
+                OnPropertyChanged(nameof(SelectedRedactor));
             }
         }
 
@@ -35,21 +32,18 @@ namespace HouseholdAutomationDesktop.ViewModel
         public RelayCommand ResourcesCommand { get; private set; }
 
         public MainWindowViewModel(ILogger logger,
-            OrdersViewModel ordersViewModel,
-            ClientsViewModel clientsViewModel,
-            ProvidersViewModel providersViewModel,
-            ResourcesViewModel resourcesViewModel)
+            Locator locator)
         {
             _logger = logger;
-            _ordersViewModel = ordersViewModel;
-            _clientsViewModel = clientsViewModel;
-            _providersViewModel = providersViewModel;
-            _resourcesViewModel = resourcesViewModel;
+            _ordersViewModel = locator.OrdersViewModel;
+            _clientsViewModel = locator.ClientsViewModel;
+            _providersViewModel = locator.ProvidersViewModel;
+            _resourcesViewModel = locator.ResourcesViewModel;
             OrdersCommand = new(OnOrdersCommandClick);
             ClientsCommand = new(OnClientsCommandClick);
             ProvidersCommand = new(OnProvidersCommandClick);
             ResourcesCommand = new(OnResourcesCommandClick);
-            _selectedRedactor = ordersViewModel;
+            _selectedRedactor = _ordersViewModel;
         }
 
         private void OnOrdersCommandClick()
@@ -62,18 +56,28 @@ namespace HouseholdAutomationDesktop.ViewModel
         {
             _logger.Log<MainWindowViewModel>(new LogMessage(LogSeverety.Info, "Open clients redactor."));
             SelectedRedactor = _clientsViewModel;
+            LoadVMData(_clientsViewModel);
         }
 
         private void OnProvidersCommandClick()
         {
             _logger.Log<MainWindowViewModel>(new LogMessage(LogSeverety.Info, "Open providers redactor."));
             SelectedRedactor = _providersViewModel;
+            LoadVMData(_providersViewModel);
         }
 
         private void OnResourcesCommandClick()
         {
             _logger.Log<MainWindowViewModel>(new LogMessage(LogSeverety.Info, "Open resources redactor."));
             SelectedRedactor = _resourcesViewModel;
+            LoadVMData(_resourcesViewModel);
+        }
+
+        private async void LoadVMData(IDataLoading dataLoading)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+            await dataLoading.LoadDataAsync();
+            Mouse.OverrideCursor = null;
         }
     }
 }

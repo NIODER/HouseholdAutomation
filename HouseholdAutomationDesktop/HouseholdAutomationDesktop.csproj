@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AutomationHouseholdDatabase\AutomationHouseholdDatabase.csproj" />
+    <ProjectReference Include="..\HouseholdAutomationLogic\HouseholdAutomationLogic.csproj" />
   </ItemGroup>
 
 </Project>
