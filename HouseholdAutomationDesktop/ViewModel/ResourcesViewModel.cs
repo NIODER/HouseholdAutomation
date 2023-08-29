@@ -23,7 +23,11 @@ namespace HouseholdAutomationDesktop.ViewModel
 			{
 				_chosenResource = value;
 				OnPropertyChanged(nameof(ChosenResource));
-			}
+				if (ChosenResource != null)
+				{
+                    ResourceProviders = new(_resourceBLL.GetResourceProviders(ChosenResource).Select(p => p.Provider));
+                }
+            }
 		}
 
 		private ObservableCollection<Resource> _resources = new();
@@ -50,7 +54,6 @@ namespace HouseholdAutomationDesktop.ViewModel
 			}
 		}
 
-        public RelayCommand LoadProvidersCommand { get; private set; }
 		public RelayCommand AddResourceCommand { get; private set; }
         public RelayCommand DeleteResouceCommand { get; private set; }
 
@@ -61,7 +64,6 @@ namespace HouseholdAutomationDesktop.ViewModel
         public ResourcesViewModel(ResourceBLL resourceBLL, ILogger logger, IWindowPresenter windowPresenter)
         {
             _resourceBLL = resourceBLL;
-            LoadProvidersCommand = new(OnLoadProvidersCommand);
 			AddResourceCommand = new(OnAddResourceCommand);
 			DeleteResouceCommand = new(OnDeleteResourceCommand);
 			_logger = logger;
@@ -87,29 +89,11 @@ namespace HouseholdAutomationDesktop.ViewModel
             await LoadDataAsync();
         }
 
-        private async void OnLoadProvidersCommand()
-        {
-			Mouse.OverrideCursor = Cursors.Wait;
-			await LoadResourceProviders();
-			Mouse.OverrideCursor = null;
-        }
-
         public async Task LoadDataAsync()
         {
 			Resources = new(_resourceBLL.Redactor.GetAll());
 			_logger.Log<ResourcesViewModel>(LogSeverety.Info, "Data loaded");
-			await LoadResourceProviders();
+			//await LoadResourceProviders();
         }
-
-		public Task LoadResourceProviders()
-		{
-			if (ChosenResource == null)
-			{
-				return Task.CompletedTask;
-			}
-			ResourceProviders = new(_resourceBLL.GetResourceProviders(ChosenResource).Select(p => p.Provider));
-			_logger.Log<ResourcesViewModel>(LogSeverety.Info, "ResourcesProvidersLoaded.");
-			return Task.CompletedTask;
-		}
     }
 }

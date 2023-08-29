@@ -1,4 +1,6 @@
-﻿namespace HouseholdAutomationLogic;
+﻿using System.Linq.Expressions;
+
+namespace HouseholdAutomationLogic;
 
 public interface IDbEntityRedactor<T> where T : class
 {

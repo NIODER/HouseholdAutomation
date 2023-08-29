@@ -9,7 +9,7 @@ namespace AutomationHouseholdDatabase.Data
 {
     public class DbEntityRedactor<T> : IDbEntityRedactor<T> where T : class
     {
-        private readonly HouseholdDbContext db;
+        protected readonly HouseholdDbContext db;
 
         public DbEntityRedactor(HouseholdDbContext db)
         {
@@ -44,13 +44,12 @@ namespace AutomationHouseholdDatabase.Data
             return db.SaveChangesAsync(cancellationToken);
         }
 
-# warning тут похоже придется делать свич
-        public IEnumerable<T> GetAll()
+        public virtual IEnumerable<T> GetAll()
         {
             return db.Set<T>().ToList();
         }
 
-        public IEnumerable<T> GetByPredicate(Func<T, bool> predicate)
+        public virtual IEnumerable<T> GetByPredicate(Func<T, bool> predicate)
         {
             return db.Set<T>().Where(predicate).ToList();
         }

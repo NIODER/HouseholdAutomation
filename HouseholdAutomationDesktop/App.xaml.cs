@@ -1,6 +1,7 @@
 ﻿using AutomationHouseholdDatabase.Data;
 using AutomationHouseholdDatabase.Models;
 using HouseholdAutomationDesktop.Model;
+using HouseholdAutomationDesktop.Model.DbEntityRedactors;
 using HouseholdAutomationDesktop.Utils;
 using HouseholdAutomationDesktop.View;
 using HouseholdAutomationDesktop.View.Dialogs;
@@ -28,12 +29,12 @@ namespace HouseholdAutomationDesktop
                 services.AddSingleton<Locator>();
 
                 services.AddTransient<IWindowPresenter, WindowPresenter>();
-                services.AddTransient<IDbEntityRedactor<Client>, DbEntityRedactor<Client>>();
+                services.AddTransient<IDbEntityRedactor<Client>, ClientDbEntityRedactor>();
                 services.AddTransient<IDbEntityRedactor<Order>, DbEntityRedactor<Order>>();
                 services.AddTransient<IDbEntityRedactor<OrdersToResource>, DbEntityRedactor<OrdersToResource>>();
-                services.AddTransient<IDbEntityRedactor<ProviderToResource>, DbEntityRedactor<ProviderToResource>>();
-                services.AddTransient<IDbEntityRedactor<Provider>, DbEntityRedactor<Provider>>();
-                services.AddTransient<IDbEntityRedactor<Resource>, DbEntityRedactor<Resource>>();
+                services.AddTransient<IDbEntityRedactor<ProviderToResource>, ProviderToResourceDbEntityRedactor>();
+                services.AddTransient<IDbEntityRedactor<Provider>, ProviderDbEntityRedactor>();
+                services.AddTransient<IDbEntityRedactor<Resource>, ResourceDbEntityRedactor>();
 
                 services.AddTransient<ClientsBLL>();
                 services.AddTransient<OrdersBLL>();

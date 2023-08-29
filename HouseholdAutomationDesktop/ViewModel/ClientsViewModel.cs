@@ -56,7 +56,6 @@ namespace HouseholdAutomationDesktop.ViewModel
             get => _chosenClient;
             set
             {
-                _logger.Log<ClientsViewModel>(LogSeverety.Debug, JsonSerializer.Serialize(value));
                 _chosenClient = value;
                 OnPropertyChanged(nameof(ChosenClient));
                 OnPropertyChanged(nameof(ChosenClientOrders));
