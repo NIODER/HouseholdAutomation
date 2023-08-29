@@ -155,6 +155,7 @@ namespace HouseholdAutomationDesktop.ViewModel
         {
 			if (SelectedProvider != null)
 			{
+                _providerBLL.Redactor.Delete(SelectedProvider);
 				Providers.Remove(SelectedProvider);
 			}
         }
