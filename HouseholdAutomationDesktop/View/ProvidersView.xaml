@@ -56,15 +56,15 @@
                 </DockPanel>
                 <DockPanel DockPanel.Dock="Top">
                     <TextBlock Text="Название:" Style="{StaticResource TextBlockPropertyNameStyle}" />
-                    <TextBlock Text="{Binding SelectedProvider.ProviderName}" Style="{StaticResource TextBlockDefaultStyle}" />
+                    <TextBox Text="{Binding SelectedProvider.ProviderName}" />
                 </DockPanel>
                 <DockPanel DockPanel.Dock="Top">
                     <TextBlock Text="Сайт:" Style="{StaticResource TextBlockPropertyNameStyle}" />
-                    <TextBlock Text="{Binding SelectedProvider.Website}" Style="{StaticResource TextBlockDefaultStyle}" />
+                    <TextBox Text="{Binding SelectedProvider.Website}" />
                 </DockPanel>
                 <DockPanel DockPanel.Dock="Top">
                     <TextBlock Text="Телефон:" Style="{StaticResource TextBlockPropertyNameStyle}" />
-                    <TextBlock Text="{Binding SelectedProvider.Phone}" Style="{StaticResource TextBlockDefaultStyle}" />
+                    <TextBox Text="{Binding SelectedProvider.Phone}" />
                 </DockPanel>
                 <ListView ItemsSource="{Binding ResourceAdapters}" d:ItemsSource="{d:SampleData}" HorizontalContentAlignment="Stretch">
                     <ListView.ContextMenu>
