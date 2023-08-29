@@ -73,6 +73,7 @@ namespace HouseholdAutomationDesktop.ViewModel
 			if (ChosenResource != null)
 			{
 				_resourceBLL.Redactor.Delete(ChosenResource);
+				_resources.Remove(ChosenResource);
             }
         }
 
