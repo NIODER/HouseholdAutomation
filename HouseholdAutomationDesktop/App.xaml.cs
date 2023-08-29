@@ -80,6 +80,8 @@ namespace HouseholdAutomationDesktop
             WindowPresenter.Register<SelectResourceWindow, SelectResourceViewModel>();
             WindowPresenter.Register<ChangesSavingWarningWindow, SaveChangesWarningViewModel>();
             WindowPresenter.Register<ChoseClientWindow, ChoseClientViewModel>();
+            WindowPresenter.Register<AddResourceToProviderWindow, AddResourceToProviderViewModel>();
+            WindowPresenter.Register<AddProviderWindow, AddProviderViewModel>();
         }
     }
 }
