@@ -78,14 +78,14 @@ namespace HouseholdAutomationDesktop.ViewModel.DialogsViewModel
             OnDialogResult?.Invoke(this, new AddResourceToProviderEventArgs(SelectedResource, Cost));
         }
 
-        public Task LoadDataAsync()
+        public async Task LoadDataAsync()
         {
-            return Task.Run(() =>
+            Mouse.OverrideCursor = Cursors.Wait;
+            await Task.Run(() =>
             {
-                Mouse.OverrideCursor = Cursors.Wait;
                 Resources = new(_resourcesRedactor.GetAll());
-                Mouse.OverrideCursor = null;
             });
+            Mouse.OverrideCursor = null;
         }
     }
 }

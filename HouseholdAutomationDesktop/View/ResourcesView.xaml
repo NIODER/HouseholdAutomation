@@ -29,9 +29,10 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <StackPanel Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10">
+            <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10">
                 <Button Content="Добавить" Style="{StaticResource DefaultButtonStyle}" Command="{Binding AddResourceCommand}" />
                 <Button Content="Удалить" Style="{StaticResource DefaultButtonStyle}" Command="{Binding DeleteResouceCommand}" />
+                <Button Content="Сохранить" Style="{StaticResource DefaultButtonStyle}" Command="{Binding SaveCommand}" />
             </StackPanel>
         </Grid>
         <DockPanel Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">

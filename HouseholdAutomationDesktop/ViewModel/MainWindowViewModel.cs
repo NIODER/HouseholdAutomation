@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using HouseholdAutomationDesktop.Model;
+using System;
+using System.CodeDom;
 using System.ComponentModel;
 using System.Windows.Input;
 
@@ -14,16 +16,31 @@ namespace HouseholdAutomationDesktop.ViewModel
         private readonly ProvidersViewModel _providersViewModel;
         private readonly ResourcesViewModel _resourcesViewModel;
 
-        private ViewModelBase? _selectedRedactor;
+        private SaveableViewModelBase? _selectedRedactor;
 
-        public ViewModelBase? SelectedRedactor
+        public SaveableViewModelBase? SelectedRedactor
         {
             get => _selectedRedactor;
             set
             {
                 _selectedRedactor = value;
                 OnPropertyChanged(nameof(SelectedRedactor));
+                if (_selectedRedactor != null)
+                {
+                    _selectedRedactor.ChangesSaved += OnSelectedRedactorChangesSaved;
+                }
+                OnPropertyChanged(nameof(Status));
             }
+        }
+
+        public string Status
+        {
+            get => SelectedRedactor?.IsSaved ?? true ? string.Empty : "Не сохранено";
+        }
+
+        private void OnSelectedRedactorChangesSaved(Type type, bool savedState)
+        {
+            OnPropertyChanged(nameof(Status));
         }
 
         public RelayCommand OrdersCommand { get; private set; }

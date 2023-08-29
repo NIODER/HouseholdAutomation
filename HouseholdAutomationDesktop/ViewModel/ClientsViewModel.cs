@@ -5,19 +5,17 @@ using HouseholdAutomationLogic.BLL;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
 namespace HouseholdAutomationDesktop.ViewModel
 {
-    public class ClientsViewModel : ViewModelBase, IDataLoading
+    public class ClientsViewModel : SaveableViewModelBase, IDataLoading
     {
         private Client? _chosenClient;
         private ObservableCollection<Client> _clients = new();
         public ObservableCollection<Order> ChosenClientOrders => _chosenClient == null ? new() : new(_chosenClient.Orders);
-        private bool _saved = true;
         private Visibility _denyAddingButtonVisibility = Visibility.Hidden;
         private readonly ClientsBLL _clientsBLL;
         private readonly ILogger _logger;
@@ -92,7 +90,7 @@ namespace HouseholdAutomationDesktop.ViewModel
 
         private async void OnSaveCommand()
         {
-            if (_saved)
+            if (IsSaved)
             {
                 MessageBox.Show("Нет изменений.");
                 return;
@@ -103,9 +101,9 @@ namespace HouseholdAutomationDesktop.ViewModel
                 _clientsBLL.Redactor.Create(client);
             }
             await _clientsBLL.Redactor.SaveChangesAsync();
+            IsSaved = true;
             await LoadDataAsync();
             Mouse.OverrideCursor = null;
-            _saved = true;
             MessageBox.Show("Сохранено");
             DenyAddingButtonVisibility = Visibility.Hidden;
         }
@@ -117,23 +115,24 @@ namespace HouseholdAutomationDesktop.ViewModel
                 _clientsBLL.Redactor.Delete(_chosenClient);
                 Clients.Remove(_chosenClient);
                 ChosenClient = Clients.FirstOrDefault();
-                _saved = false;
+                IsSaved = false;
             }
         }
 
         private void OnAddCommand()
         {
-            _saved = false;
             ChosenClient = new Client();
             Clients.Add(ChosenClient);
             addedClients.Add(ChosenClient);
             DenyAddingButtonVisibility = Visibility.Visible;
+            IsSaved = false;
         }
 
         private void OnDenyCommand()
         {
-            _saved = true;
             ChosenClient = _clients.FirstOrDefault();
+            _clientsBLL.Redactor.ClearChanges();
+            IsSaved = true;
         }
 
         private void OnDeleteOrderCommand()
@@ -141,7 +140,7 @@ namespace HouseholdAutomationDesktop.ViewModel
             if (_chosenClient != null && _chosenOrder != null)
             {
                 _chosenClient.Orders.Remove(_chosenOrder);
-                _saved = false;
+                IsSaved = false;
             }
         }
 

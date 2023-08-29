@@ -13,7 +13,7 @@ using System.Windows.Input;
 
 namespace HouseholdAutomationDesktop.ViewModel
 {
-    public class ProvidersViewModel : ViewModelBase, IDataLoading
+    public class ProvidersViewModel : SaveableViewModelBase, IDataLoading
     {
 		public class ResourceAdapter
 		{
@@ -109,6 +109,7 @@ namespace HouseholdAutomationDesktop.ViewModel
             Mouse.OverrideCursor = Cursors.Wait;
             addedProviders.ForEach(p => _providerBLL.Redactor.Create(p));
             await _providerBLL.Redactor.SaveChangesAsync();
+            IsSaved = true;
             Mouse.OverrideCursor = null;
         }
 
@@ -133,7 +134,11 @@ namespace HouseholdAutomationDesktop.ViewModel
             {
                 try
                 {
-                    await _providerBLL.AddResourceToProvider(SelectedProvider, addResourceToProviderEventArgs.SelectedResource, addResourceToProviderEventArgs.Cost);
+                    var providerToResource = await _providerBLL.AddResourceToProvider(SelectedProvider, addResourceToProviderEventArgs.SelectedResource, addResourceToProviderEventArgs.Cost);
+                    ResourceAdapters ??= new();
+                    ResourceAdapters.Add(new ResourceAdapter(SelectedProvider, providerToResource, addResourceToProviderEventArgs.SelectedResource));
+                    OnPropertyChanged(nameof(ResourceAdapters));
+                    IsSaved = false;
                 }
                 catch (Exception ex)
                 {
@@ -157,6 +162,7 @@ namespace HouseholdAutomationDesktop.ViewModel
 			{
                 _providerBLL.Redactor.Delete(SelectedProvider);
 				Providers.Remove(SelectedProvider);
+                IsSaved = false;
 			}
         }
 
@@ -165,6 +171,7 @@ namespace HouseholdAutomationDesktop.ViewModel
             SelectedProvider = new Provider();
             Providers.Add(SelectedProvider);
             addedProviders.Add(SelectedProvider);
+            IsSaved = false;
         }
 
         public Task LoadDataAsync()
@@ -174,6 +181,7 @@ namespace HouseholdAutomationDesktop.ViewModel
                 var providers = _providerBLL.Redactor.GetAll();
                 Providers = new(providers);
                 SelectedProvider = Providers.FirstOrDefault();
+                IsSaved = false;
             });
         }
     }

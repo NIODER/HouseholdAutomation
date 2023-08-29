@@ -48,11 +48,12 @@
             <RowDefinition Height="20" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Menu Grid.Row="0" Height="25" VerticalAlignment="Top">
+        <Menu Grid.Row="0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Stretch">
             <MenuItem Header="Заказы" Command="{Binding OrdersCommand}" Style="{StaticResource MenuItemStyle}" />
             <MenuItem Header="Клиенты" Command="{Binding ClientsCommand}" Style="{StaticResource MenuItemStyle}" />
             <MenuItem Header="Поставщики" Command="{Binding ProvidersCommand}" Style="{StaticResource MenuItemStyle}" />
             <MenuItem Header="Ресурсы" Command="{Binding ResourcesCommand}" Style="{StaticResource MenuItemStyle}" />
+            <MenuItem Header="{Binding Status}" IsEnabled="False" />
         </Menu>
         <Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <ContentPresenter Grid.Row="1" Content="{Binding SelectedRedactor}" />

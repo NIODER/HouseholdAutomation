@@ -24,7 +24,7 @@ namespace HouseholdAutomationLogic.BLL
             {
                 provider = await _providerRedactor.CreateAndSaveAsync(provider, cancellationToken);
             }
-            if (!_providerRedactor.GetByPredicate(r => r.ProviderId == resource.ResourceId).Any())
+            if (!_resourceRedactor.GetByPredicate(r => r.ResourceId == resource.ResourceId).Any())
             {
                 resource = await _resourceRedactor.CreateAndSaveAsync(resource, cancellationToken);
             }

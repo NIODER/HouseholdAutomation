@@ -30,7 +30,7 @@ namespace HouseholdAutomationDesktop
 
                 services.AddTransient<IWindowPresenter, WindowPresenter>();
                 services.AddTransient<IDbEntityRedactor<Client>, ClientDbEntityRedactor>();
-                services.AddTransient<IDbEntityRedactor<Order>, DbEntityRedactor<Order>>();
+                services.AddTransient<IDbEntityRedactor<Order>, OrderDbEntityRedactor>();
                 services.AddTransient<IDbEntityRedactor<OrdersToResource>, DbEntityRedactor<OrdersToResource>>();
                 services.AddTransient<IDbEntityRedactor<ProviderToResource>, ProviderToResourceDbEntityRedactor>();
                 services.AddTransient<IDbEntityRedactor<Provider>, ProviderDbEntityRedactor>();
