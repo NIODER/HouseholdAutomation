@@ -33,6 +33,11 @@ public partial class HouseholdDbContext : DbContext, IHouseholdDbContext
 
     public virtual DbSet<Resource> Resources { get; set; }
 
+    public void ClearChanges()
+    {
+        ChangeTracker.Clear();
+    }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseNpgsql(_connectionString);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

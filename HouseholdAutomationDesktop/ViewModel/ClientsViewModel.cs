@@ -1,8 +1,7 @@
-﻿using AutomationHouseholdDatabase.Data;
-using AutomationHouseholdDatabase.Models;
+﻿using AutomationHouseholdDatabase.Models;
 using CommunityToolkit.Mvvm.Input;
 using HouseholdAutomationDesktop.Model;
-using HouseholdAutomationLogic;
+using HouseholdAutomationLogic.BLL;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -20,7 +19,7 @@ namespace HouseholdAutomationDesktop.ViewModel
         public ObservableCollection<Order> ChosenClientOrders => _chosenClient == null ? new() : new(_chosenClient.Orders);
         private bool _saved = true;
         private Visibility _denyAddingButtonVisibility = Visibility.Hidden;
-        private readonly IRedactor<Client> _redactor;
+        private readonly ClientsBLL _clientsBLL;
         private readonly ILogger _logger;
         private readonly List<Client> addedClients = new();
         private Order? _chosenOrder;
@@ -31,9 +30,9 @@ namespace HouseholdAutomationDesktop.ViewModel
         public RelayCommand DenyCommand { get; private set; }
         public RelayCommand DeleteOrderCommand { get; private set; }
 
-        public ClientsViewModel(IRedactorFactory redactorFactory, ILogger logger)
+        public ClientsViewModel(ClientsBLL clientsBLL, ILogger logger)
         {
-            _redactor = redactorFactory.Create<Client>();
+            _clientsBLL = clientsBLL;
             _logger = logger;
             SaveCommand = new(OnSaveCommand);
             DeleteCommand = new(OnDeleteCommand);
@@ -102,9 +101,9 @@ namespace HouseholdAutomationDesktop.ViewModel
             Mouse.OverrideCursor = Cursors.Wait;
             foreach (var client in addedClients)
             {
-                _redactor.InsertOneAndSave(client);
+                _clientsBLL.Redactor.Create(client);
             }
-            await _redactor.SaveChangesAsync();
+            await _clientsBLL.Redactor.SaveChangesAsync();
             await LoadDataAsync();
             Mouse.OverrideCursor = null;
             _saved = true;
@@ -116,7 +115,7 @@ namespace HouseholdAutomationDesktop.ViewModel
         {
             if (_chosenClient != null)
             {
-                _redactor.DeleteOne(_chosenClient);
+                _clientsBLL.Redactor.Delete(_chosenClient);
                 Clients.Remove(_chosenClient);
                 ChosenClient = Clients.FirstOrDefault();
                 _saved = false;
@@ -147,11 +146,14 @@ namespace HouseholdAutomationDesktop.ViewModel
             }
         }
 
-        public async Task LoadDataAsync()
+        public Task LoadDataAsync()
         {
-            Clients = new(await _redactor.GetAllFromDbAsync());
-            ChosenClient = Clients.FirstOrDefault();
-            _logger.Log<ClientsViewModel>(LogSeverety.Info, $"All clients selected from database. Count {Clients.Count}.");
+            return Task.Run(() =>
+            {
+                Clients = new(_clientsBLL.Redactor.GetAll());
+                ChosenClient = Clients.FirstOrDefault();
+                _logger.Log<ClientsViewModel>(LogSeverety.Info, $"All clients selected from database. Count {Clients.Count}.");
+            });
         }
     }
 }

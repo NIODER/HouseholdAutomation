@@ -1,7 +1,6 @@
 ﻿using HouseholdAutomationDesktop.ViewModel;
 using HouseholdAutomationDesktop.ViewModel.DialogsViewModel;
 using Microsoft.Extensions.DependencyInjection;
-using System.Diagnostics.Contracts;
 
 namespace HouseholdAutomationDesktop
 {
@@ -17,5 +16,6 @@ namespace HouseholdAutomationDesktop
         public AddResourceToProviderViewModel AddResourceToProviderViewModel => App.host.Services.GetRequiredService<AddResourceToProviderViewModel>();
         public SelectResourceViewModel SelectResourceViewModel => App.host.Services.GetRequiredService<SelectResourceViewModel>();
         public SaveChangesWarningViewModel SaveChangesWarningViewModel => App.host.Services.GetRequiredService<SaveChangesWarningViewModel>();
+        public ChoseClientViewModel ChoseClientViewModel => App.host.Services.GetRequiredService<ChoseClientViewModel>();
     }
 }

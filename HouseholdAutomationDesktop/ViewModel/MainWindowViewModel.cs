@@ -14,9 +14,9 @@ namespace HouseholdAutomationDesktop.ViewModel
         private readonly ProvidersViewModel _providersViewModel;
         private readonly ResourcesViewModel _resourcesViewModel;
 
-        private ViewModelBase _selectedRedactor;
+        private ViewModelBase? _selectedRedactor;
 
-        public ViewModelBase SelectedRedactor
+        public ViewModelBase? SelectedRedactor
         {
             get => _selectedRedactor;
             set
@@ -31,8 +31,7 @@ namespace HouseholdAutomationDesktop.ViewModel
         public RelayCommand ProvidersCommand { get; private set; }
         public RelayCommand ResourcesCommand { get; private set; }
 
-        public MainWindowViewModel(ILogger logger,
-            Locator locator)
+        public MainWindowViewModel(ILogger logger, Locator locator)
         {
             _logger = logger;
             _ordersViewModel = locator.OrdersViewModel;
@@ -43,13 +42,14 @@ namespace HouseholdAutomationDesktop.ViewModel
             ClientsCommand = new(OnClientsCommandClick);
             ProvidersCommand = new(OnProvidersCommandClick);
             ResourcesCommand = new(OnResourcesCommandClick);
-            _selectedRedactor = _ordersViewModel;
+            _selectedRedactor = null;
         }
 
         private void OnOrdersCommandClick()
         {
             _logger.Log<MainWindowViewModel>(new LogMessage(LogSeverety.Info, "Open orders redactor."));
             SelectedRedactor = _ordersViewModel;
+            LoadVMData(_ordersViewModel);
         }
 
         private void OnClientsCommandClick()

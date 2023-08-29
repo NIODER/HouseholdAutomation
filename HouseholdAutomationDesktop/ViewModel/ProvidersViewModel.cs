@@ -2,14 +2,14 @@
 using CommunityToolkit.Mvvm.Input;
 using HouseholdAutomationDesktop.Utils;
 using HouseholdAutomationDesktop.ViewModel.DialogsViewModel;
-using HouseholdAutomationLogic;
-using Microsoft.EntityFrameworkCore;
+using HouseholdAutomationLogic.BLL;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 
 namespace HouseholdAutomationDesktop.ViewModel
 {
@@ -82,49 +82,73 @@ namespace HouseholdAutomationDesktop.ViewModel
 			}
 		}
 
+        private readonly List<Provider> addedProviders = new();
+
 		public RelayCommand AddResourceCommand { get; private set; }
 		public RelayCommand DeleteResourceCommand { get; private set; }
 		public RelayCommand AddProviderCommand { get; private set; }
         public RelayCommand DeleteProviderCommand { get; private set; }
         public RelayCommand SaveCommand { get; private set; }
 
-        private readonly IRedactor<Provider> _providersRedactor;
+        private readonly ProviderBLL _providerBLL;
         private readonly IWindowPresenter _windowPresenter;
 
-        public ProvidersViewModel(IRedactorFactory redactorFactory, IWindowPresenter windowPresenter)
+        public ProvidersViewModel(ProviderBLL providerBLL, IWindowPresenter windowPresenter)
         {
-            _providersRedactor = redactorFactory.Create<Provider>();
+            _providerBLL = providerBLL;
             _windowPresenter = windowPresenter;
             AddResourceCommand = new(OnAddResourceCommand);
 			DeleteResourceCommand = new(OnDeleteResourceCommand);
 			AddProviderCommand = new(OnAddProviderCommand);
 			DeleteProviderCommand = new(OnDeleteProviderCommand);
-			SaveCommand = new(OnSaveCommand);
+			SaveCommand = new(OnSaveCommandAsync);
         }
 
-        private void OnSaveCommand()
+        private async void OnSaveCommandAsync()
         {
-            throw new NotImplementedException();
+            Mouse.OverrideCursor = Cursors.Wait;
+            addedProviders.ForEach(p => _providerBLL.Redactor.Create(p));
+            await _providerBLL.Redactor.SaveChangesAsync();
+            Mouse.OverrideCursor = null;
         }
 
         private void OnAddResourceCommand()
 		{
-            throw new NotImplementedException();
+            if (SelectedProvider == null)
+            {
+                MessageBox.Show("Выберите поставщика.");
+                return;
+            }
+            _windowPresenter.Show<AddResourceToProviderViewModel>(OnResourceSelectedAsync);
         }
 
-        private void OnDeleteResourceCommand()
+        private async void OnResourceSelectedAsync(object? sender, EventArgs e)
+        {
+            if (SelectedProvider == null)
+            {
+                MessageBox.Show("Выберите поставщика.");
+                return;
+            }
+            if (e is AddResourceToProviderViewModel.AddResourceToProviderEventArgs addResourceToProviderEventArgs)
+            {
+                try
+                {
+                    await _providerBLL.AddResourceToProvider(SelectedProvider, addResourceToProviderEventArgs.SelectedResource, addResourceToProviderEventArgs.Cost);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+
+        private async void OnDeleteResourceCommand()
         {
             if (SelectedResource == null || SelectedProvider == null)
             {
                 return;
             }
-            var res = SelectedProvider.ProviderToResources
-                .FirstOrDefault(p => p.ProviderId == SelectedResource.Provider.ProviderId && p.ResourceId == SelectedResource.Resource.ResourceId);
-            if (res != null)
-            {
-                SelectedProvider.ProviderToResources.Remove(res);
-                _providersRedactor.UpdateOne(SelectedProvider);
-            }
+            await _providerBLL.RemoveResourceFromProvider(SelectedProvider, SelectedResource.Resource);
         }
 
         private void OnDeleteProviderCommand()
@@ -137,14 +161,19 @@ namespace HouseholdAutomationDesktop.ViewModel
 
         private void OnAddProviderCommand()
         {
-            throw new NotImplementedException();
+            SelectedProvider = new Provider();
+            Providers.Add(SelectedProvider);
+            addedProviders.Add(SelectedProvider);
         }
 
-        public async Task LoadDataAsync()
+        public Task LoadDataAsync()
         {
-			var providers = await _providersRedactor.GetAllFromDbAsync();
-			Providers = new(providers);
-			SelectedProvider = Providers.FirstOrDefault();
+            return Task.Run(() =>
+            {
+                var providers = _providerBLL.Redactor.GetAll();
+                Providers = new(providers);
+                SelectedProvider = Providers.FirstOrDefault();
+            });
         }
     }
 }

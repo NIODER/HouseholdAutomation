@@ -3,23 +3,25 @@ using CommunityToolkit.Mvvm.Input;
 using HouseholdAutomationDesktop.Utils;
 using HouseholdAutomationDesktop.ViewModel.DialogsViewModel;
 using HouseholdAutomationLogic;
+using HouseholdAutomationLogic.BLL;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
 namespace HouseholdAutomationDesktop.ViewModel
 {
-    public class OrdersViewModel : ViewModelBase
+    public class OrdersViewModel : ViewModelBase, IDataLoading
     {
         private ObservableCollection<Order> orders = new();
         private Order? selectedOrder;
         private ObservableCollection<OrdersToResource> resources = new();
         private OrdersToResource? selectedResource;
 
-        private readonly IRedactor<Order> _ordersRedactor;
-        private readonly IRedactor<OrdersToResource> _ordersToResourceRedactor;
+        private readonly OrdersBLL _ordersBLL;
+        private readonly IDbEntityRedactor<OrdersToResource> _ordersToResourcesRedactor;
         private readonly IWindowPresenter _windowPresenter;
         private bool saved = true;
 
@@ -28,6 +30,7 @@ namespace HouseholdAutomationDesktop.ViewModel
         public RelayCommand AddOrderCommand { get; private set; }
         public RelayCommand DeleteOrderCommand { get; private set; }
         public RelayCommand SaveCommand { get; private set; }
+        public RelayCommand ChoseClientCommand { get; private set; }
 
         public ObservableCollection<Order> Orders
         {
@@ -57,6 +60,7 @@ namespace HouseholdAutomationDesktop.ViewModel
             {
                 selectedOrder = value;
                 OnPropertyChanged(nameof(SelectedOrder));
+                _ = LoadResourcesAsync();
             }
         }
 
@@ -75,7 +79,7 @@ namespace HouseholdAutomationDesktop.ViewModel
             get => selectedResource;
             set
             {
-                if (!IsSaved())
+                if (!saved)
                 {
                     _windowPresenter.Show<SaveChangesWarningViewModel>(OnSaveChangesDialogResult);
                 }
@@ -84,32 +88,51 @@ namespace HouseholdAutomationDesktop.ViewModel
             }
         }
 
-
-        public OrdersViewModel(IRedactorFactory redactorFactory, IWindowPresenter windowPresenter)
+        public OrdersViewModel(OrdersBLL ordersBLL, IDbEntityRedactor<OrdersToResource> ordersToResourcesRedactor, IWindowPresenter windowPresenter)
         {
             _windowPresenter = windowPresenter;
-            _ordersRedactor = redactorFactory.Create<Order>();
-            _ordersToResourceRedactor = redactorFactory.Create<OrdersToResource>();
+            _ordersBLL = ordersBLL;
+            _ordersToResourcesRedactor = ordersToResourcesRedactor;
             AddResourceCommand = new(OnAddResourceCommand);
-            RemoveResourceCommand = new(OnRemoveResourceCommand);
+            RemoveResourceCommand = new(OnRemoveResourceCommandAsync);
             AddOrderCommand = new(OnAddOrderCommand);
             DeleteOrderCommand = new(OnDeleteOrderCommand);
             SaveCommand = new(OnSaveCommand);
+            ChoseClientCommand = new(OnChoseClientCommand);
         }
 
-        private bool IsSaved()
+        private void OnChoseClientCommand()
         {
-            return _ordersRedactor.IsChangesSaved() && _ordersToResourceRedactor.IsChangesSaved() && saved;
+            if (SelectedOrder == null)
+            {
+                MessageBox.Show("Выберите заказ.");
+                return;
+            }
+            _windowPresenter.Show<ChoseClientViewModel>(OnClientChosen);
+        }
+
+        private void OnClientChosen(object? sender, EventArgs e)
+        {
+            if (SelectedOrder == null)
+            {
+                MessageBox.Show("Выберите заказ.");
+                return;
+            }
+            if (e is ChoseClientViewModel.ChoseClientEventArgs choseClientEventArgs)
+            {
+                SelectedOrder.ClientId = choseClientEventArgs.SelectedClient.ClientId;
+                OnPropertyChanged(nameof(SelectedOrder));
+            }
         }
 
         private async void OnSaveCommand()
         {
             Mouse.OverrideCursor = Cursors.Wait;
-            if (SelectedOrder != null && !_ordersRedactor.GetAllFromDb().Contains(SelectedOrder))
+            if (SelectedOrder != null && !_ordersBLL.Redactor.GetAll().Contains(SelectedOrder))
             {
                 try
                 {
-                    _ordersRedactor.Add(SelectedOrder);
+                    _ordersBLL.Redactor.Create(SelectedOrder);
                 }
                 catch (NotSupportedException)
                 {
@@ -126,8 +149,7 @@ namespace HouseholdAutomationDesktop.ViewModel
             }
             try
             {
-                await _ordersRedactor.SaveChangesAsync();
-                await _ordersToResourceRedactor.SaveChangesAsync();
+                await _ordersBLL.Redactor.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -144,13 +166,15 @@ namespace HouseholdAutomationDesktop.ViewModel
                 MessageBox.Show("Выберите заказ.");
                 return;
             }
-            _ordersRedactor.DeleteOne(SelectedOrder);
+            _ordersBLL.Redactor.Create(SelectedOrder);
+            saved = false;
             Orders.Remove(SelectedOrder);
             OnPropertyChanged(nameof(Orders));
         }
 
         private void OnAddOrderCommand()
         {
+            
             var order = new Order()
             {
                 OrderDate = DateOnly.FromDateTime(DateTime.UtcNow)
@@ -158,9 +182,11 @@ namespace HouseholdAutomationDesktop.ViewModel
             Orders.Add(order);
             SelectedOrder = order;
             OnPropertyChanged(nameof(Orders));
+            OnPropertyChanged(nameof(Resources));
+            OnPropertyChanged(nameof(SelectedResource));
         }
 
-        private void OnRemoveResourceCommand()
+        private async void OnRemoveResourceCommandAsync()
         {
             if (SelectedOrder == null)
             {
@@ -172,18 +198,19 @@ namespace HouseholdAutomationDesktop.ViewModel
                 MessageBox.Show("Выберите ресурс.");
                 return;
             }
-            _ordersToResourceRedactor.DeleteOne(SelectedResource);
             Resources.Remove(SelectedResource);
+            await _ordersBLL.RemoveResourceAsync(SelectedOrder, SelectedResource.Resource);
             OnPropertyChanged(nameof(Resources));
         }
 
         private void OnAddResourceCommand()
         {
-            _windowPresenter.Show<SelectResourceViewModel>(OnResourceSelected);
+            _windowPresenter.Show<SelectResourceViewModel>(OnResourceSelectedAsync);
         }
 
-        private void OnResourceSelected(object? sender, EventArgs e)
+        private async void OnResourceSelectedAsync(object? sender, EventArgs e)
         {
+            Mouse.OverrideCursor = Cursors.Wait;
             if (e is not SelectResourceViewModel.SelectedResourceEventArgs selectedResourceEventArgs)
             {
                 throw new InvalidCastException($"EventArgs has type {e.GetType()}, not {typeof(SelectResourceViewModel)}");
@@ -193,15 +220,35 @@ namespace HouseholdAutomationDesktop.ViewModel
                 MessageBox.Show("Выберите заказ.");
                 return;
             }
-            var ordersToResource = new OrdersToResource()
+            if (!_ordersBLL.Redactor.GetByPredicate(o => o.OrderId == SelectedOrder.OrderId).Any())
             {
-                OrderId = SelectedOrder.OrderId,
-                ResourceId = selectedResourceEventArgs.SelectedResource.ResourceId,
-                Count = selectedResourceEventArgs.Count
-            };
-            _ordersToResourceRedactor.Add(ordersToResource);
-            Resources.Add(ordersToResource);
+                SelectedOrder = await _ordersBLL.Redactor.CreateAndSaveAsync(SelectedOrder);
+            }
+            var ordersToResources = await _ordersBLL.AddResourceAsync(SelectedOrder, selectedResourceEventArgs.SelectedResource, selectedResourceEventArgs.Count);
+            Mouse.OverrideCursor = null;
+            Resources.Add(ordersToResources);
             OnPropertyChanged(nameof(Resources));
+        }
+
+        public async Task LoadDataAsync()
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+            await Task.Run(() =>
+            {
+                Orders = new(_ordersBLL.Redactor.GetAll());
+                SelectedOrder = Orders.FirstOrDefault();
+            });
+            Mouse.OverrideCursor = null;
+        }
+
+        private async Task LoadResourcesAsync()
+        {
+            Mouse.OverrideCursor = Cursors.ArrowCD;
+            await Task.Run(() =>
+            {
+                Resources = new(_ordersToResourcesRedactor.GetByPredicate(r => r.OrderId == SelectedOrder?.OrderId));
+            });
+            Mouse.OverrideCursor = null;
         }
     }
 }

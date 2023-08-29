@@ -1,13 +1,12 @@
 ﻿using AutomationHouseholdDatabase.Models;
 using CommunityToolkit.Mvvm.Input;
-using HouseholdAutomationLogic;
+using HouseholdAutomationLogic.BLL;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace HouseholdAutomationDesktop.ViewModel.DialogsViewModel
@@ -96,11 +95,11 @@ namespace HouseholdAutomationDesktop.ViewModel.DialogsViewModel
 
         public event EventHandler<EventArgs>? OnDialogResult;
 
-		private readonly IRedactor<Resource> resoucesRedactor;
+		private readonly ResourceBLL _resourceBLL;
 
-        public SelectResourceViewModel(IRedactorFactory redactorFactory)
+        public SelectResourceViewModel(ResourceBLL resourceBLL)
 		{
-			resoucesRedactor = redactorFactory.Create<Resource>();
+			_resourceBLL = resourceBLL;
 			ChoseResourceCommand = new(OnChoseResourceCommand);
 		}
 
@@ -114,12 +113,10 @@ namespace HouseholdAutomationDesktop.ViewModel.DialogsViewModel
             OnDialogResult?.Invoke(this, new SelectedResourceEventArgs(SelectedResource, ResourceCount));
         }
 
-        public async Task LoadDataAsync()
+        public Task LoadDataAsync() => Task.Run(() =>
         {
-			Mouse.OverrideCursor = Cursors.Wait;
-			dbResources = await resoucesRedactor.GetAllFromDbAsync();
-			Resources = new(dbResources);
-			Mouse.OverrideCursor = null;
-		}
-	}
+            dbResources = _resourceBLL.Redactor.GetAll().ToList();
+            Resources = new(dbResources);
+        });
+    }
 }

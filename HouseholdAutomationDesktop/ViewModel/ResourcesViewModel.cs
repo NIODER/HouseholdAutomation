@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using HouseholdAutomationDesktop.Model;
 using HouseholdAutomationDesktop.Utils;
 using HouseholdAutomationDesktop.ViewModel.DialogsViewModel;
-using HouseholdAutomationLogic;
+using HouseholdAutomationLogic.BLL;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -54,16 +54,14 @@ namespace HouseholdAutomationDesktop.ViewModel
 		public RelayCommand AddResourceCommand { get; private set; }
         public RelayCommand DeleteResouceCommand { get; private set; }
 
-        private readonly IRedactor<Resource> _resourcesRedactor;
-		private readonly IRedactor<Provider> _providersRedactor;
+		private readonly ResourceBLL _resourceBLL;
 		private readonly ILogger _logger;
 		private readonly IWindowPresenter _windowPresenter;
 
-        public ResourcesViewModel(IRedactorFactory redactorFactory, ILogger logger, IWindowPresenter windowPresenter)
+        public ResourcesViewModel(ResourceBLL resourceBLL, ILogger logger, IWindowPresenter windowPresenter)
         {
-			_resourcesRedactor = redactorFactory.Create<Resource>();
-			_providersRedactor = redactorFactory.Create<Provider>();
-			LoadProvidersCommand = new(OnLoadProvidersCommand);
+            _resourceBLL = resourceBLL;
+            LoadProvidersCommand = new(OnLoadProvidersCommand);
 			AddResourceCommand = new(OnAddResourceCommand);
 			DeleteResouceCommand = new(OnDeleteResourceCommand);
 			_logger = logger;
@@ -74,7 +72,7 @@ namespace HouseholdAutomationDesktop.ViewModel
         {
 			if (ChosenResource != null)
 			{
-                _resourcesRedactor.DeleteOne(ChosenResource);
+				_resourceBLL.Redactor.Delete(ChosenResource);
             }
         }
 
@@ -85,7 +83,7 @@ namespace HouseholdAutomationDesktop.ViewModel
 
         private async void OnResourceAdded(object? sender, EventArgs e)
         {
-			await LoadDataAsync();
+            await LoadDataAsync();
         }
 
         private async void OnLoadProvidersCommand()
@@ -97,14 +95,18 @@ namespace HouseholdAutomationDesktop.ViewModel
 
         public async Task LoadDataAsync()
         {
-			Resources = new(await _resourcesRedactor.GetAllFromDbAsync());
+			Resources = new(_resourceBLL.Redactor.GetAll());
 			_logger.Log<ResourcesViewModel>(LogSeverety.Info, "Data loaded");
 			await LoadResourceProviders();
         }
 
 		public Task LoadResourceProviders()
 		{
-			ResourceProviders = new(_providersRedactor.GetByPredicate(p => p.ProviderToResources.Any(ptr => ptr.ResourceId == _chosenResource?.ResourceId)));
+			if (ChosenResource == null)
+			{
+				return Task.CompletedTask;
+			}
+			ResourceProviders = new(_resourceBLL.GetResourceProviders(ChosenResource).Select(p => p.Provider));
 			_logger.Log<ResourcesViewModel>(LogSeverety.Info, "ResourcesProvidersLoaded.");
 			return Task.CompletedTask;
 		}

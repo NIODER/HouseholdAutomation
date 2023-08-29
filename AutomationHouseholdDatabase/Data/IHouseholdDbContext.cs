@@ -12,5 +12,8 @@ namespace AutomationHouseholdDatabase.Data
         DbSet<Provider> Providers { get; set; }
         DbSet<ProviderToResource> ProviderToResources { get; set; }
         DbSet<Resource> Resources { get; set; }
+        int SaveChanges();
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+        void ClearChanges();
     }
 }

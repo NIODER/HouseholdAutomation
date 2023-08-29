@@ -6,8 +6,39 @@
         xmlns:local="clr-namespace:HouseholdAutomationDesktop.View.Dialogs"
         mc:Ignorable="d"
         DataContext="{Binding AddResourceToProviderViewModel, Mode=OneWay, Source={StaticResource Locator}}"
-        Title="AddResourceToProviderWindow" Height="450" Width="800">
+        Title="Добавление ресурса" Height="478" Width="406">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="0.1*" />
+        </Grid.RowDefinitions>
+        <DockPanel>
+            <Grid DockPanel.Dock="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Стоимость:" />
+                <TextBox Grid.Column="1" Text="{Binding Cost}" />
+            </Grid>
+            <ListBox ItemsSource="{Binding Resources}" SelectedItem="{Binding SelectedResource}"
+             HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+             HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+             d:ItemsSource="{d:SampleData}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{Binding ResourceId}" />
+                            <TextBlock Grid.Column="1" Text="{Binding ResourceName}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+        <Button Grid.Row="1" Content="Добавить" Command="{Binding AddCommand}" Style="{StaticResource DefaultButtonStyle}" />
     </Grid>
 </Window>

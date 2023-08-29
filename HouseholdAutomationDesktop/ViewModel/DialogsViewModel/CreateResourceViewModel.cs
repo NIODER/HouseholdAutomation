@@ -1,15 +1,24 @@
 ﻿using AutomationHouseholdDatabase.Models;
 using CommunityToolkit.Mvvm.Input;
-using HouseholdAutomationLogic;
+using HouseholdAutomationLogic.BLL;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace HouseholdAutomationDesktop.ViewModel.DialogsViewModel
 {
     public class CreateResourceViewModel : ViewModelBase, IDataLoading, IDialogViewModel
     {
+        public class CreateResourceEventArgs : EventArgs
+        {
+            public Resource CreatedResource { get; set; }
+
+            public CreateResourceEventArgs(Resource createdResource)
+            {
+                CreatedResource = createdResource;
+            }
+        }
+
         private Resource _resource = new();
 
         public Resource Resource
@@ -60,21 +69,21 @@ namespace HouseholdAutomationDesktop.ViewModel.DialogsViewModel
 
         public RelayCommand SaveCommand { get; private set; }
 
-        private readonly IRedactor<Resource> _redactor;
-        private readonly IRedactor<Provider> _providersRedactor;
+        private readonly ResourceBLL _resourceBLL;
+        private readonly ProviderBLL _providerBLL;
 
         public event EventHandler<EventArgs>? OnDialogResult;
 
-        public CreateResourceViewModel(IRedactorFactory redactorFactory)
+        public CreateResourceViewModel(ResourceBLL resourceBLL, ProviderBLL providerBLL)
         {
-            _providersRedactor = redactorFactory.Create<Provider>();
-            _redactor = redactorFactory.Create<Resource>();
+            _resourceBLL = resourceBLL;
+            _providerBLL = providerBLL;
             SaveCommand = new(OnSaveCommand);
         }
 
         private async void OnSaveCommand()
         {
-            var resource = await _redactor.InsertOneAndSaveAsync(Resource);
+            var resource = await _resourceBLL.Redactor.CreateAndSaveAsync(Resource);
             if (_selectedProvider != null)
             {
                 resource.ProviderToResources.Add(new()
@@ -83,15 +92,14 @@ namespace HouseholdAutomationDesktop.ViewModel.DialogsViewModel
                     Cost = _cost,
                     ProviderId = _selectedProvider.ProviderId
                 });
-                _redactor.UpdateOne(resource);
-                await _redactor.SaveChangesAsync();
+                resource = await _resourceBLL.Redactor.UpdateAndSaveAsync(resource);
             }
             OnDialogResult?.Invoke(this, new());
         }
 
-        public async Task LoadDataAsync()
+        public Task LoadDataAsync() => Task.Run(() =>
         {
-            Providers = new(await _providersRedactor.GetAllFromDbAsync());
-        }
+            Providers = new(_providerBLL.Redactor.GetAll());
+        });
     }
 }

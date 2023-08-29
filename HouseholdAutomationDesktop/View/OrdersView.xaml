@@ -14,89 +14,87 @@
             <ColumnDefinition Width="0.5*" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0">
+        <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="0.1*" />
             </Grid.RowDefinitions>
-            <ListBox DockPanel.Dock="Top" ItemsSource="{Binding Orders}" SelectedItem="{Binding SelectedOrder}"
-         HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-         HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
-         d:ItemsSource="{d:SampleData}">
-                <ListBox.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Добавить" Command="{Binding AddOrderCommand}" />
-                        <MenuItem Header="Удалить" Command="{Binding DeleteOrderCommand}" />
-                    </ContextMenu>
-                </ListBox.ContextMenu>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding OrderDate}" />
-                            <TextBlock Grid.Column="1" Text="{Binding Client.ClientName}" />
-                            <TextBlock Grid.Row="1" Text="{Binding Client.Phone}" />
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-            <Grid Grid.Row="1">
-                <Button Command="{Binding SaveCommand}" Content="Сохранить" Style="{StaticResource DefaultButtonStyle}" />
-            </Grid>
+            <DockPanel Grid.Column="1" Margin="10">
+                <TextBlock DockPanel.Dock="Top" Text="Информация о заказе:" />
+                <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
+                    <TextBlock Text="Дата:" Width="250" />
+                    <TextBlock Text="{Binding SelectedOrder.OrderDate}" Width="250"/>
+                </DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="Информация о клиенте:" />
+                <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
+                    <TextBlock Text="Id клиента" Width="250" />
+                    <TextBlock Text="{Binding SelectedOrder.Client.ClientId}" />
+                    <Button Content="Выбрать" Command="{Binding ChoseClientCommand}" Style="{StaticResource DefaultButtonStyle}" HorizontalAlignment="Right" />
+                </DockPanel>
+                <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
+                    <TextBlock Text="Адрес" Width="250" />
+                    <TextBlock Text="{Binding SelectedOrder.Client.Address}" />
+                </DockPanel>
+                <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
+                    <TextBlock Text="Номер телефона" Width="250" />
+                    <TextBlock Text="{Binding SelectedOrder.Client.Phone}" />
+                </DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="Ресурсы:" />
+                <ListBox ItemsSource="{Binding Resources}" SelectedItem="{Binding SelectedResource}"
+                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                         HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                         d:ItemsSource="{d:SampleData}">
+                    <ListBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Добавить" Command="{Binding AddResourceCommand}" />
+                            <MenuItem Header="Удалить выбранный" Command="{Binding RemoveResourceCommand}" />
+                        </ContextMenu>
+                    </ListBox.ContextMenu>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding ResourceId}" />
+                                <TextBlock Grid.Column="1" Text="{Binding Resource.ResourceName}" />
+                                <TextBlock Grid.Column="2" Text="{Binding Count}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+            <Button Grid.Row="1" Command="{Binding SaveCommand}" Content="Сохранить" Style="{StaticResource DefaultButtonStyle}" />
         </Grid>
-        <DockPanel Grid.Column="1" Margin="10">
-            <TextBlock DockPanel.Dock="Top" Text="Информация о заказе:" />
-            <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
-                <TextBlock Text="Дата:" Width="250" />
-                <TextBlock Text="{Binding SelectedOrder.OrderDate}" Width="250"/>
-            </DockPanel>
-            <TextBlock DockPanel.Dock="Top" Text="Информация о клиенте:" />
-            <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
-                <TextBlock Text="Id клиента" Width="250" />
-                <TextBox Text="{Binding SelectedOrder.ClientId}" HorizontalAlignment="Stretch"/>
-            </DockPanel>
-
-            <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
-                <TextBlock Text="Адрес" Width="250" />
-                <TextBox Text="{Binding SelectedOrder.Client.Address}" />
-            </DockPanel>
-            <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
-                <TextBlock Text="Номер телефона" Width="250" />
-                <TextBox Text="{Binding SelectedOrder.Client.Phone}" />
-            </DockPanel>
-            <TextBlock DockPanel.Dock="Top" Text="Ресурсы:" />
-            <ListBox ItemsSource="{Binding Resources}" SelectedItem="{Binding SelectedResource}"
-                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                     HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
-                     d:ItemsSource="{d:SampleData}">
-                <ListBox.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Добавить" Command="{Binding AddResourceCommand}" />
-                        <MenuItem Header="Удалить выбранный" Command="{Binding RemoveResourceCommand}" />
-                    </ContextMenu>
-                </ListBox.ContextMenu>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding ResourceId}" />
-                            <TextBlock Grid.Column="1" Text="{Binding Resource.ResourceName}" />
-                            <TextBlock Grid.Column="2" Text="{Binding Count}" />
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </DockPanel>
+        <ListBox ItemsSource="{Binding Orders}" SelectedItem="{Binding SelectedOrder}"
+                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                 HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                 d:ItemsSource="{d:SampleData}">
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Добавить" Command="{Binding AddOrderCommand}" />
+                    <MenuItem Header="Удалить" Command="{Binding DeleteOrderCommand}" />
+                </ContextMenu>
+            </ListBox.ContextMenu>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding OrderDate}" />
+                        <TextBlock Grid.Column="1" Text="{Binding Client.ClientName}" />
+                        <TextBlock Grid.Row="1" Text="{Binding Client.Phone}" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </UserControl>

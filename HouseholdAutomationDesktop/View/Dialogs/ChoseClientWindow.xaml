@@ -1,0 +1,34 @@
+﻿<Window x:Class="HouseholdAutomationDesktop.View.Dialogs.ChoseClientWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HouseholdAutomationDesktop.View.Dialogs"
+        mc:Ignorable="d"
+        DataContext="{Binding ChoseClientViewModel, Mode=OneWay, Source={StaticResource Locator}}"
+        Title="ChoseClient" Height="450" Width="700">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="0.1*" />
+        </Grid.RowDefinitions>
+        <DockPanel>
+            <TextBlock DockPanel.Dock="Top" Text="{Binding SearchQuery, TargetNullValue='Поиск'}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+            <ListView ItemsSource="{Binding Clients}" SelectedItem="{Binding SelectedClient}"
+              VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+              HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+              d:ItemsSource="{d:SampleData}" DockPanel.Dock="Top">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="id" DisplayMemberBinding="{Binding ClientId}" />
+                        <GridViewColumn Header="id" DisplayMemberBinding="{Binding ClientId}" />
+                        <GridViewColumn Header="Имя" DisplayMemberBinding="{Binding ClientName}" />
+                        <GridViewColumn Header="Номер телефона" DisplayMemberBinding="{Binding Phone}" />
+                        <GridViewColumn Header="Адрес" DisplayMemberBinding="{Binding Address}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </DockPanel>
+        <Button Content="Выбрать" Command="{Binding ChoseClientCommand}" Style="{StaticResource DefaultButtonStyle}" Grid.Row="1" Click="Button_Click" />
+    </Grid>
+</Window>
