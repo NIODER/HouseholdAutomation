@@ -21,7 +21,7 @@ namespace HouseholdAutomationDesktop.ViewModel
         private OrdersToResource? selectedResource;
 
         private readonly OrdersBLL _ordersBLL;
-        private readonly IDbEntityRedactor<OrdersToResource> _ordersToResourcesRedactor;
+        private readonly IRedactor<OrdersToResource> _ordersToResourcesRedactor;
         private readonly IWindowPresenter _windowPresenter;
 
         public RelayCommand AddResourceCommand { get; private set; }
@@ -87,7 +87,7 @@ namespace HouseholdAutomationDesktop.ViewModel
             }
         }
 
-        public OrdersViewModel(OrdersBLL ordersBLL, IDbEntityRedactor<OrdersToResource> ordersToResourcesRedactor, IWindowPresenter windowPresenter)
+        public OrdersViewModel(OrdersBLL ordersBLL, IRedactor<OrdersToResource> ordersToResourcesRedactor, IWindowPresenter windowPresenter)
         {
             _windowPresenter = windowPresenter;
             _ordersBLL = ordersBLL;

@@ -4,18 +4,18 @@ namespace HouseholdAutomationLogic.BLL
 {
     public class OrdersBLL : IBLL<Order>
     {
-        private readonly IDbEntityRedactor<Order> _ordersRedactor;
-        private readonly IDbEntityRedactor<OrdersToResource> _orderToResourceRedactor;
-        private readonly IDbEntityRedactor<Resource> _resourceRedactor;
+        private readonly IRedactor<Order> _ordersRedactor;
+        private readonly IRedactor<OrdersToResource> _orderToResourceRedactor;
+        private readonly IRedactor<Resource> _resourceRedactor;
 
-        public OrdersBLL(IDbEntityRedactor<Order> ordersRedactor, IDbEntityRedactor<OrdersToResource> orderToResourceRedactor, IDbEntityRedactor<Resource> resourceRedactor)
+        public OrdersBLL(IRedactor<Order> ordersRedactor, IRedactor<OrdersToResource> orderToResourceRedactor, IRedactor<Resource> resourceRedactor)
         {
             _ordersRedactor = ordersRedactor;
             _orderToResourceRedactor = orderToResourceRedactor;
             _resourceRedactor = resourceRedactor;
         }
 
-        public IDbEntityRedactor<Order> Redactor => _ordersRedactor;
+        public IRedactor<Order> Redactor => _ordersRedactor;
 
         public Task RemoveResourceAsync(Order order, Resource resource, CancellationToken cancellationToken = default)
         {

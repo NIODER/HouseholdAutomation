@@ -14,7 +14,7 @@ namespace HouseholdAutomationDesktop.ViewModel.DialogsViewModel
         private Resource? selectedResource;
         private int cost;
         private ObservableCollection<Resource> resources = new();
-        private readonly IDbEntityRedactor<Resource> _resourcesRedactor;
+        private readonly IRedactor<Resource> _resourcesRedactor;
 
         public class AddResourceToProviderEventArgs : EventArgs
         {
@@ -62,7 +62,7 @@ namespace HouseholdAutomationDesktop.ViewModel.DialogsViewModel
             }
         }
 
-        public AddResourceToProviderViewModel(IDbEntityRedactor<Resource> resourcesRedactor)
+        public AddResourceToProviderViewModel(IRedactor<Resource> resourcesRedactor)
         {
             _resourcesRedactor = resourcesRedactor;
             AddCommand = new(OnAddCommand);

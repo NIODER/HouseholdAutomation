@@ -1,15 +1,13 @@
-﻿using AutomationHouseholdDatabase.Data;
+﻿
+using AutomationHouseholdDatabase.Data;
 using AutomationHouseholdDatabase.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace HouseholdAutomationDesktop.Model.DbEntityRedactors
 {
-    internal class ProviderToResourceDbEntityRedactor : DbEntityRedactor<ProviderToResource>
+    public class ProviderToResourcesRedactor : Redactor<ProviderToResource>
     {
-        public ProviderToResourceDbEntityRedactor(HouseholdDbContext db) : base(db)
+        public ProviderToResourcesRedactor(HouseholdDbContext db) : base(db)
         {
         }
 

@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace AutomationHouseholdDatabase.Data
 {
-    public class DbEntityRedactor<T> : IDbEntityRedactor<T> where T : class
+    public abstract class Redactor<T> : IRedactor<T> where T : class
     {
         protected readonly HouseholdDbContext db;
 
-        public DbEntityRedactor(HouseholdDbContext db)
+        public Redactor(HouseholdDbContext db)
         {
             this.db = db;
         }

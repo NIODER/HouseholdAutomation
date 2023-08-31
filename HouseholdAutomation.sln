@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HouseholdAutomationDesktop"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutomationHouseholdDatabase", "AutomationHouseholdDatabase\AutomationHouseholdDatabase.csproj", "{5F24C86E-DCC9-4489-BC03-C0F0EAC89553}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HouseholdAutomationLogic", "HouseholdAutomationLogic\HouseholdAutomationLogic.csproj", "{53C25EC8-907D-49E7-B4B8-6A9EACD69D7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HouseholdAutomationLogic", "HouseholdAutomationLogic\HouseholdAutomationLogic.csproj", "{53C25EC8-907D-49E7-B4B8-6A9EACD69D7E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutomationHouseholdDatabaseTests", "AutomationHouseholdDatabaseTests\AutomationHouseholdDatabaseTests.csproj", "{EA29302F-0993-4C2F-A0C9-39111042934F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{53C25EC8-907D-49E7-B4B8-6A9EACD69D7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53C25EC8-907D-49E7-B4B8-6A9EACD69D7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53C25EC8-907D-49E7-B4B8-6A9EACD69D7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA29302F-0993-4C2F-A0C9-39111042934F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA29302F-0993-4C2F-A0C9-39111042934F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA29302F-0993-4C2F-A0C9-39111042934F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA29302F-0993-4C2F-A0C9-39111042934F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

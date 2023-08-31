@@ -4,18 +4,18 @@ namespace HouseholdAutomationLogic.BLL
 {
     public class ProviderBLL : IBLL<Provider>
     {
-        private readonly IDbEntityRedactor<Provider> _providerRedactor;
-        private readonly IDbEntityRedactor<Resource> _resourceRedactor;
-        private readonly IDbEntityRedactor<ProviderToResource> _providerToResourceRedactor;
+        private readonly IRedactor<Provider> _providerRedactor;
+        private readonly IRedactor<Resource> _resourceRedactor;
+        private readonly IRedactor<ProviderToResource> _providerToResourceRedactor;
 
-        public ProviderBLL(IDbEntityRedactor<Provider> providerRedactor, IDbEntityRedactor<Resource> resourceRedactor, IDbEntityRedactor<ProviderToResource> providerToResourceRedactor)
+        public ProviderBLL(IRedactor<Provider> providerRedactor, IRedactor<Resource> resourceRedactor, IRedactor<ProviderToResource> providerToResourceRedactor)
         {
             _providerRedactor = providerRedactor;
             _resourceRedactor = resourceRedactor;
             _providerToResourceRedactor = providerToResourceRedactor;
         }
 
-        public IDbEntityRedactor<Provider> Redactor => _providerRedactor;
+        public IRedactor<Provider> Redactor => _providerRedactor;
 
         public async Task<ProviderToResource> AddResourceToProvider(Provider provider, Resource resource, int cost, CancellationToken cancellationToken = default)
         {

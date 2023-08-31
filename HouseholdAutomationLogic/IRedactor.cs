@@ -2,7 +2,7 @@
 
 namespace HouseholdAutomationLogic;
 
-public interface IDbEntityRedactor<T> where T : class
+public interface IRedactor<T> where T : class
 {
     T Create(T client);
     Task<T> CreateAndSaveAsync(T entity, CancellationToken cancellationToken = default);

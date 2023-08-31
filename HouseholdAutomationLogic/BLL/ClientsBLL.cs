@@ -1,21 +1,19 @@
-﻿using AutomationHouseholdDatabase.Data;
-using AutomationHouseholdDatabase.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using AutomationHouseholdDatabase.Models;
 
 namespace HouseholdAutomationLogic.BLL
 {
     public class ClientsBLL : IBLL<Client>
     {
-        private readonly IDbEntityRedactor<Client> _clientsRedactor;
-        private readonly IDbEntityRedactor<Order> _ordersRedactor;
+        private readonly IRedactor<Client> _clientsRedactor;
+        private readonly IRedactor<Order> _ordersRedactor;
 
-        public ClientsBLL(IDbEntityRedactor<Client> clientsRedactor, IDbEntityRedactor<Order> ordersRedactor)
+        public ClientsBLL(IRedactor<Client> clientsRedactor, IRedactor<Order> ordersRedactor)
         {
             _clientsRedactor = clientsRedactor;
             _ordersRedactor = ordersRedactor;
         }
 
-        public IDbEntityRedactor<Client> Redactor => _clientsRedactor;
+        public IRedactor<Client> Redactor => _clientsRedactor;
 
         public async Task<Order> AddOrderAsync(Client client, Order order, CancellationToken cancellationToken = default)
         {

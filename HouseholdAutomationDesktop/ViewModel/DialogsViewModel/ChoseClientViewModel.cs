@@ -23,7 +23,7 @@ namespace HouseholdAutomationDesktop.ViewModel.DialogsViewModel
             }
         }
 
-        private readonly IDbEntityRedactor<Client> _clientRedactor;
+        private readonly IRedactor<Client> _clientRedactor;
 
         public event EventHandler<EventArgs>? OnDialogResult;
 
@@ -77,7 +77,7 @@ namespace HouseholdAutomationDesktop.ViewModel.DialogsViewModel
             }
         }
 
-        public ChoseClientViewModel(IDbEntityRedactor<Client> clientsRedactor)
+        public ChoseClientViewModel(IRedactor<Client> clientsRedactor)
         {
             _clientRedactor = clientsRedactor;
             ChoseClientCommand = new(OnChoseClientCommand);

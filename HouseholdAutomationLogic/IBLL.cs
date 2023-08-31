@@ -8,6 +8,6 @@ namespace HouseholdAutomationLogic
 {
     public interface IBLL<T> where T : class
     {
-        public IDbEntityRedactor<T> Redactor { get; }
+        public IRedactor<T> Redactor { get; }
     }
 }

@@ -7,9 +7,9 @@ using System.Linq;
 
 namespace HouseholdAutomationDesktop.Model.DbEntityRedactors
 {
-    internal class ResourceDbEntityRedactor : DbEntityRedactor<Resource>
+    public class ResourcesRedactor : Redactor<Resource>
     {
-        public ResourceDbEntityRedactor(HouseholdDbContext db) : base(db)
+        public ResourcesRedactor(HouseholdDbContext db) : base(db)
         {
         }
 

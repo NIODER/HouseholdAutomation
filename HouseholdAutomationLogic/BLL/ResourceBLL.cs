@@ -4,13 +4,13 @@ namespace HouseholdAutomationLogic.BLL
 {
     public class ResourceBLL : IBLL<Resource>
     {
-        private readonly IDbEntityRedactor<Resource> _resourceRedactor;
-        private readonly IDbEntityRedactor<Provider> _providerRedactor;
-        private readonly IDbEntityRedactor<ProviderToResource> _providerToResourceRedactor;
+        private readonly IRedactor<Resource> _resourceRedactor;
+        private readonly IRedactor<Provider> _providerRedactor;
+        private readonly IRedactor<ProviderToResource> _providerToResourceRedactor;
 
-        public IDbEntityRedactor<Resource> Redactor => _resourceRedactor;
+        public IRedactor<Resource> Redactor => _resourceRedactor;
 
-        public ResourceBLL(IDbEntityRedactor<Resource> resourceRedactor, IDbEntityRedactor<Provider> providerRedactor, IDbEntityRedactor<ProviderToResource> providerToResourceRedactor)
+        public ResourceBLL(IRedactor<Resource> resourceRedactor, IRedactor<Provider> providerRedactor, IRedactor<ProviderToResource> providerToResourceRedactor)
         {
             _resourceRedactor = resourceRedactor;
             _providerRedactor = providerRedactor;

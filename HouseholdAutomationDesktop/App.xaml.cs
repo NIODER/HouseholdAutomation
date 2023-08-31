@@ -1,4 +1,5 @@
 ﻿using AutomationHouseholdDatabase.Data;
+using AutomationHouseholdDatabase.Data.DbEntityRedactors;
 using AutomationHouseholdDatabase.Models;
 using HouseholdAutomationDesktop.Model;
 using HouseholdAutomationDesktop.Model.DbEntityRedactors;
@@ -22,19 +23,19 @@ namespace HouseholdAutomationDesktop
     public partial class App : Application
     {
         public static readonly IHost host = Host.CreateDefaultBuilder()
-            .ConfigureServices(services =>
+            .ConfigureServices((System.Action<IServiceCollection>)(services =>
             {
                 services.AddSingleton<ILogger, DebugLogger>();
                 services.AddTransient<HouseholdDbContext>(s => new(ConfigurationManager.ConnectionStrings["DatabaseConnectionString"].ConnectionString));
                 services.AddSingleton<Locator>();
 
                 services.AddTransient<IWindowPresenter, WindowPresenter>();
-                services.AddTransient<IDbEntityRedactor<Client>, ClientDbEntityRedactor>();
-                services.AddTransient<IDbEntityRedactor<Order>, OrderDbEntityRedactor>();
-                services.AddTransient<IDbEntityRedactor<OrdersToResource>, DbEntityRedactor<OrdersToResource>>();
-                services.AddTransient<IDbEntityRedactor<ProviderToResource>, ProviderToResourceDbEntityRedactor>();
-                services.AddTransient<IDbEntityRedactor<Provider>, ProviderDbEntityRedactor>();
-                services.AddTransient<IDbEntityRedactor<Resource>, ResourceDbEntityRedactor>();
+                ServiceCollectionServiceExtensions.AddTransient<IRedactor<Client>, ClientsRedactor>(services);
+                ServiceCollectionServiceExtensions.AddTransient<IRedactor<Order>, OrdersRedactor>(services);
+                ServiceCollectionServiceExtensions.AddTransient<IRedactor<OrdersToResource>, OrderToResourcesRedactor>(services);
+                ServiceCollectionServiceExtensions.AddTransient<IRedactor<ProviderToResource>, ProviderToResourcesRedactor>(services);
+                ServiceCollectionServiceExtensions.AddTransient<IRedactor<Provider>, ProvidersRedactor>(services);
+                ServiceCollectionServiceExtensions.AddTransient<IRedactor<Resource>, ResourcesRedactor>(services);
 
                 services.AddTransient<ClientsBLL>();
                 services.AddTransient<OrdersBLL>();
@@ -65,7 +66,7 @@ namespace HouseholdAutomationDesktop
                 services.AddTransient<SaveChangesWarningViewModel>();
                 services.AddTransient<ChoseClientViewModel>();
 
-            }).Build();
+            })).Build();
 
         protected override void OnStartup(StartupEventArgs e)
         {
